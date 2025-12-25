@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { serve } from "@hono/node-server";
 import { Rcon } from "rcon-client";
 
 const app = new Hono();
@@ -11,7 +12,7 @@ const RCON_PORT = 25575;
 const RCON_PASSWORD = process.env.RCON_PASSWORD;
 const API_KEY = process.env.API_KEY;
 
-// RCON connection (lazy + reusable)
+// RCON connection
 let rcon = null;
 
 async function getRcon() {
@@ -29,7 +30,6 @@ async function getRcon() {
 
 // Routes
 app.get("/", (c) => c.text("HTTP → RCON bridge (Node) alive"));
-
 app.get("/health", (c) => c.json({ ok: true }));
 
 app.post("/cmd", async (c) => {
@@ -38,14 +38,8 @@ app.post("/cmd", async (c) => {
     return c.json({ error: "unauthorized" }, 401);
   }
 
-  let body;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "invalid json" }, 400);
-  }
-
-  if (!body.cmd) {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.cmd) {
     return c.json({ error: "missing cmd" }, 400);
   }
 
@@ -58,10 +52,11 @@ app.post("/cmd", async (c) => {
   }
 });
 
-// Railway provides PORT automatically
-const port = process.env.PORT || 3000;
+// 🚀 THIS is what actually starts the server on Node
+const port = Number(process.env.PORT) || 3000;
+serve({
+  fetch: app.fetch,
+  port
+});
 
-export default {
-  port,
-  fetch: app.fetch
-};
+console.log(`HTTP → RCON bridge listening on port ${port}`);
