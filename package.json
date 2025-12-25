@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "hono": "^4.6.0",
+    "@hono/node-server": "^1.13.0",
     "rcon-client": "^4.2.3"
   }
 }
