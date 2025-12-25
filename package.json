@@ -2,6 +2,12 @@
   "name": "railway-http-rcon",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "hono": "^4.6.0",
     "rcon-client": "^4.2.3"
