@@ -1,0 +1,9 @@
+{
+  "name": "railway-http-rcon",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.6.0",
+    "rcon-client": "^4.2.3"
+  }
+}
